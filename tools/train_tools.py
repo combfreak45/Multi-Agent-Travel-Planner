@@ -1,7 +1,35 @@
-def search_trains(source: str, destination: str, date: str) -> dict:
-    return {
-        "trains": [
-            {"name": "Express", "time": "6:00 AM"},
-            {"name": "Superfast", "time": "9:00 PM"}
-        ]
+import http.client
+import json
+import urllib.parse
+from config import rapidapi_key
+
+def search_trains(start_station_code: str, end_station_code: str, date_of_journey_dd_mm_yyyy: str) -> dict:
+    """
+    Search for trains between two Indian railway stations on a given date.
+    
+    Args:
+        start_station_code (str): Source station code (e.g., "NDLS" for New Delhi). Convert city name to correct station code before calling.
+        end_station_code (str): Destination station code (e.g., "MMCT" for Mumbai Central). Convert city name to correct station code before calling.
+        date_of_journey_dd_mm_yyyy (str): Travel date in exactly DD-MM-YYYY format (e.g., "30-11-2025").
+    """
+    conn = http.client.HTTPSConnection("irctc-train-api.p.rapidapi.com")
+
+    headers = {
+        'x-rapidapi-key': rapidapi_key,
+        'x-rapidapi-host': "irctc-train-api.p.rapidapi.com",
+        'Content-Type': "application/json"
     }
+
+    start = urllib.parse.quote(start_station_code)
+    end = urllib.parse.quote(end_station_code)
+    date_formatted = urllib.parse.quote(date_of_journey_dd_mm_yyyy)
+
+    url = f"/api/v1/trains-between-stations?startStationCode={start}&endStationCode={end}&date={date_formatted}"
+
+    try:
+        conn.request("GET", url, headers=headers)
+        res = conn.getresponse()
+        data = res.read()
+        return json.loads(data.decode("utf-8"))
+    except Exception as e:
+        return {"status": False, "message": f"Error occurred: {str(e)}", "data": []}
