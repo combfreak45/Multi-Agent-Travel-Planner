@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY")
+RAPIDAPI_KEY = os.getenv("RAPID_APIKEY")
 
 def search_flights(source: str, destination: str, date: str, travel_class: str = "ECONOMY", adults: int = 1) -> dict:
     """
@@ -36,6 +36,7 @@ def search_flights(source: str, destination: str, date: str, travel_class: str =
     try:
         response = requests.get(url, headers=headers, params=params)
         data = response.json()
+        print(data)
 
         if "message" in data:
             return {"error": data["message"]}

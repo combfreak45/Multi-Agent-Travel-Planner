@@ -8,7 +8,6 @@ from agents import (
     notes_agent,
     task_agent,
     response_formatter,
-    calendar_agent
 )
 
 # =========================================================
@@ -33,7 +32,6 @@ travel_workflow = SequentialAgent(
     sub_agents=[
         travel_planner,     # Step 1: Gather options
         response_formatter,  # Step 2: Format output
-        calendar_agent
     ]
 )
 

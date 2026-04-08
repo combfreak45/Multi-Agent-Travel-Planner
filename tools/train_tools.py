@@ -1,6 +1,11 @@
 import http.client
 import json
 import urllib.parse
+from dotenv import load_dotenv
+
+load_dotenv()
+
+RAPIDAPI_KEY = os.getenv("RAPID_APIKEY_TRAIN")
 # from config import rapidapi_key
 
 def search_trains(start_station_code: str, end_station_code: str, date_of_journey_dd_mm_yyyy: str) -> dict:
@@ -15,7 +20,7 @@ def search_trains(start_station_code: str, end_station_code: str, date_of_journe
     conn = http.client.HTTPSConnection("irctc-api2.p.rapidapi.com")
 
     # Fallback to key temporarily if .env is missing so you aren't blocked!
-    key = rapidapi_key if rapidapi_key else "e80de2b94emshc95078909e4f8d2p1fe304jsn8dbb354bed75"
+    key = RAPIDAPI_KEY
 
     headers = {
         'x-rapidapi-key': key,

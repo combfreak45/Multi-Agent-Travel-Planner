@@ -16,7 +16,7 @@ from tools.train_tools import search_trains
 
 train_agent = Agent(
     name="train_agent",
-    model="gemini-2.5-flash",
+    model="gemini-2.5-pro",
     tools=[search_trains],
     instruction="""
     You are a train schedule specialist for Indian Railways.

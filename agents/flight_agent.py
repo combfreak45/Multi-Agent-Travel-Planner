@@ -15,7 +15,7 @@ from google.genai import types
 from tools.flight_tools import search_flights
 
 flight_agent = Agent(
-    model="gemini-2.5-flash-lite",
+    model="gemini-2.5-pro",
     name="flight_agent",
     description="Helps search for flights.",
     instruction="You help users find flights. Use the search_flights tool.",
