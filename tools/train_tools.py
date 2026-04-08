@@ -1,7 +1,7 @@
 import http.client
 import json
 import urllib.parse
-from config import rapidapi_key
+# from config import rapidapi_key
 
 def search_trains(start_station_code: str, end_station_code: str, date_of_journey_dd_mm_yyyy: str) -> dict:
     """
@@ -15,7 +15,7 @@ def search_trains(start_station_code: str, end_station_code: str, date_of_journe
     conn = http.client.HTTPSConnection("irctc-train-api.p.rapidapi.com")
 
     headers = {
-        'x-rapidapi-key': rapidapi_key,
+        'x-rapidapi-key': 'e80de2b94emshc95078909e4f8d2p1fe304jsn8dbb354bed75',
         'x-rapidapi-host': "irctc-train-api.p.rapidapi.com",
         'Content-Type': "application/json"
     }
@@ -30,6 +30,7 @@ def search_trains(start_station_code: str, end_station_code: str, date_of_journe
         conn.request("GET", url, headers=headers)
         res = conn.getresponse()
         data = res.read()
+        print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
     except Exception as e:
         return {"status": False, "message": f"Error occurred: {str(e)}", "data": []}
