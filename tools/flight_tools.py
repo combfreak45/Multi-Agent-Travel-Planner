@@ -1,68 +1,48 @@
+import http.client
 import os
-import requests
+import json
+import urllib.parse
+# import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-RAPIDAPI_KEY = os.getenv("RAPID_APIKEY")
+RAPIDAPI_KEY = os.getenv("RAPID_APIKEY_FLIGHT")
 
-def search_flights(source: str, destination: str, date: str, travel_class: str = "ECONOMY", adults: int = 1) -> dict:
+def search_flights(source: str, destination: str, date: str, adults: int) -> dict:
     """
-    Search for flights using Google Flights.
-    source and destination are IATA airport codes e.g. DEL, BOM, BLR, LAX, JFK.
-    date must be in YYYY-MM-DD format.
-    travel_class options: ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST
+    Search for flights between two cities on a given date.
+    
+    Args:
+        source (str): Source city code (e.g., "DEL" for Delhi). Convert city name to correct city code before calling.
+        destination (str): Destination city code (e.g., "BOM" for Mumbai). Convert city name to correct city code before calling.
+        date (str): Travel date in exactly YYYY-MM-DD format (e.g., "2023-11-30").
+        adults (int): Number of adults for the trip, If user havent provide any input take 1.
     """
-    url = "https://google-flights2.p.rapidapi.com/api/v1/searchFlights"
+    conn = http.client.HTTPSConnection("google-flights2.p.rapidapi.com")
 
     headers = {
-        "X-RapidAPI-Key": RAPIDAPI_KEY,
-        "X-RapidAPI-Host": "google-flights2.p.rapidapi.com"
+        'x-rapidapi-key': "e80de2b94emshc95078909e4f8d2p1fe304jsn8dbb354bed75",
+        'x-rapidapi-host': "google-flights2.p.rapidapi.com",
+        'Content-Type': "application/json"
     }
 
-    params = {
-        "departure_id": source,
-        "arrival_id": destination,
-        "outbound_date": date,
-        "travel_class": travel_class,
-        "adults": str(adults),
-        "show_hidden": "1",
-        "currency": "INR",
-        "language_code": "en-US",
-        "country_code": "IN",
-        "search_type": "best"
-    }
+    # note: have to figure out how to provide current date if user have not provide inputs for date.
+
+    source = urllib.parse.quote(source)
+    destination = urllib.parse.quote(destination)
+    date = urllib.parse.quote(date)
+    print(date)
+    adults = urllib.parse.quote(str(adults))
+
+    
+    url = f"/api/v1/searchFlights?departure_id={source}&arrival_id={destination}&outbound_date={date}&travel_class=ECONOMY&adults={adults}&show_hidden=0&currency=INR&language_code=en-US&country_code=IN&search_type=best"
 
     try:
-        response = requests.get(url, headers=headers, params=params)
-        data = response.json()
-        print(data)
-
-        if "message" in data:
-            return {"error": data["message"]}
-
-        flights = []
-        itineraries = data.get("data", {}).get("itineraries", [])
-
-        if not itineraries:
-            return {"message": "No flights found", "raw": data}
-
-        for item in itineraries[:5]:
-            try:
-                leg = item["legs"][0]
-                flights.append({
-                    "airline": leg["carriers"]["marketing"][0]["name"],
-                    "flight_number": leg["carriers"]["marketing"][0].get("flightNumber", "N/A"),
-                    "departure": leg["departure"],
-                    "arrival": leg["arrival"],
-                    "duration_mins": leg["durationInMinutes"],
-                    "stops": leg["stopCount"],
-                    "price": item["price"]["formatted"],
-                })
-            except (KeyError, IndexError):
-                continue
-
-        return {"flights": flights}
-
+        conn.request("GET", url, headers=headers)
+        res = conn.getresponse()
+        data = res.read()
+        print(data.decode("utf-8"))
+        return json.loads(data.decode("utf-8"))
     except Exception as e:
-        return {"error": str(e)}
+        return {"status": False, "message": f"Error occurred: {str(e)}", "data": []}

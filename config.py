@@ -7,4 +7,4 @@ load_dotenv()
 cloud_logging_client = google.cloud.logging.Client()
 
 model_name = os.getenv("MODEL")
-rapidapi_key = os.getenv("RAPIDAPI_KEY")
+# rapidapi_key = os.getenv("RAPIDAPI_KEY")
