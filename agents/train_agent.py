@@ -1,18 +1,19 @@
 import os
 import asyncio
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "FALSE"
+# os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "FALSE"
 
-print("Step 1: imports done 2")
 
 from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from tools.train_tools import search_trains
+
+print("Step 1: imports done")
 
 train_agent = Agent(
     name="train_agent",
