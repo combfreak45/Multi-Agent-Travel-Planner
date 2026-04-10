@@ -32,7 +32,7 @@ def search_flights(source: str, destination: str, date: str, adults: int) -> dic
     source = urllib.parse.quote(source)
     destination = urllib.parse.quote(destination)
     date = urllib.parse.quote(date)
-    print(date)
+    # print(date)
     adults = urllib.parse.quote(str(adults))
 
     
@@ -42,7 +42,7 @@ def search_flights(source: str, destination: str, date: str, adults: int) -> dic
         conn.request("GET", url, headers=headers)
         res = conn.getresponse()
         data = res.read()
-        print(data.decode("utf-8"))
+        # print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
     except Exception as e:
         return {"status": False, "message": f"Error occurred: {str(e)}", "data": []}

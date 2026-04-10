@@ -39,7 +39,7 @@ def search_trains(start_station_code: str, end_station_code: str, date_of_journe
         conn.request("GET", url, headers=headers)
         res = conn.getresponse()
         data = res.read()
-        print(data.decode("utf-8"))
+        # print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
     except Exception as e:
         return {"status": False, "message": f"Error occurred: {str(e)}", "data": []}
