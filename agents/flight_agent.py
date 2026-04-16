@@ -14,7 +14,20 @@ flight_agent = Agent(
     output_key="flight_data",
     instruction="""
     You help users find flights. Use the search_flights tool.
-    If source or destination doesn't have airport search for nearby airport and find flights. No need to ask the user.    """,
+
+    CRITICAL: If the source or destination city doesn't have a commercial airport:
+    1. Identify the nearest major city with an airport (within 200km if possible)
+    2. Use that airport code to search for flights
+    3. In your response, clearly mention: "Showing flights from [Nearby City] ([CODE]) as [Original City] doesn't have an airport"
+
+    Examples:
+    - Shimla → Use Chandigarh (IXC)
+    - Manali → Use Kullu (KUU) or Chandigarh (IXC)
+    - Mysore → Use Bangalore (BLR)
+
+    Do NOT ask the user for clarification. Make the best decision and explain it.
+    If no nearby airport exists within reasonable distance, return: "No flights available - [City] and nearby areas don't have commercial airports."
+    """,
     tools=[search_flights],
 )
 

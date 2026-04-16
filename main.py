@@ -11,7 +11,8 @@ from agents import (
     flight_agent,
     train_agent,
     bus_agent,
-    response_formatter,
+    connection_agent,
+    optimization_agent,
 )
 
 print("Step 1: imports done")
@@ -33,8 +34,9 @@ travel_planner = ParallelAgent(
 travel_workflow = SequentialAgent(
     name="travel_workflow",
     sub_agents=[
-        travel_planner,      # Step 1: Gather options
-        response_formatter,  # Step 2: Format output
+        travel_planner,      # Step 1: Gather options (parallel)
+        connection_agent,    # Step 2: Calculate multi-leg connections if needed
+        optimization_agent,  # Step 3: Optimize and recommend best options
     ]
 )
 
@@ -78,9 +80,15 @@ async def main():
             session_id=session.id,
             new_message=content,
         ):
+            # Show responses from:
+            # - travel_assistant (root agent for conversation)
+            # - optimization_agent (final optimized recommendations)
+            # Hide: flight_agent, train_agent, bus_agent, connection_agent
             if event.is_final_response() and event.content:
-                for part in event.content.parts:
-                    print("Agent:", part.text)
+                if event.author in ["travel_assistant", "optimization_agent"]:
+                    for part in event.content.parts:
+                        if hasattr(part, 'text') and part.text:
+                            print(part.text)
 
 if __name__ == "__main__":
     try:
